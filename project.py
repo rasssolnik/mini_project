@@ -129,4 +129,26 @@ class SnakeGame(QWidget):
         painter.setFont(QFont('Arial', 16))
         painter.drawText(10, 30, f'Счет: {self.score}')
 
+        def keyPressEvent(self, event):
+            key = event.key()
+            # Запрет на противоположное направление
+            if self.key_timer.isActive():  # Проверяем, активен ли таймер
+                return  # Если активен, игнорируем нажатие
+
+            if key == Qt.Key_Left and self.direction != Qt.Key_Right:
+                self.direction = Qt.Key_Left
+            elif key == Qt.Key_Right and self.direction != Qt.Key_Left:
+                self.direction = Qt.Key_Right
+            elif key == Qt.Key_Up and self.direction != Qt.Key_Down:
+                self.direction = Qt.Key_Up
+            elif key == Qt.Key_Down and self.direction != Qt.Key_Up:
+                self.direction = Qt.Key_Down
+
+            self.key_timer.start(100)  # Запускаем таймер на 100 мс
+            self.key_pressed = True  # Устанавливаем флаг нажатия клавиши
+
+        def reset_key_press(self):
+            self.key_timer.stop()  # Останавливаем таймер, когда время истекло
+            self.key_pressed = False  # Сбрасываем флаг нажатия клавиши
+
 
