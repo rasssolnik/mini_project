@@ -36,5 +36,14 @@ class SnakeGame(QWidget):
         self.layout.addWidget(self.start_button)
         self.setLayout(self.layout)
 
+    def start_game(self):
+        self.name = self.name_input.text()
+        if not self.name:
+            QMessageBox.warning(self, 'Ошибка', 'Пожалуйста, введите имя!')
+            return
+        self.layout.itemAt(0).widget().hide()
+        self.layout.itemAt(1).widget().hide()  # Скрываем кнопку и поле ввода имени (начало игры, чтобы не мешало)
+        self.timer.start(self.speed, self)
+        self.setFocus()  # Устанавливаем фокус на игровое окно (ради того чтобы после нажатия кнопки начала игры кнопки перемещения нажимались адекватно)
     
 
