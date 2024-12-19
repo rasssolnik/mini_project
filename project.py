@@ -100,4 +100,33 @@ class SnakeGame(QWidget):
 
         self.update()
 
+    def paintEvent(self, event):
+        painter = QPainter(self)
+
+        # Рисуем игровое поле
+        for x in range(WIDTH):
+            for y in range(HEIGHT):
+                rect = QRect(x * CELL_SIZE, y * CELL_SIZE + 40, CELL_SIZE, CELL_SIZE)
+                painter.setPen(QColor('#00ff1a'))
+                painter.setBrush(QColor('#038510'))
+                painter.drawRect(rect)
+
+        # Рисуем еду
+        food_x, food_y = self.food
+        painter.setBrush(QColor(255, 0, 0))
+        painter.drawEllipse(food_x * CELL_SIZE, food_y * CELL_SIZE + 40, CELL_SIZE, CELL_SIZE)
+
+        # Рисуем змею
+        for index, (x, y) in enumerate(self.snake):
+            if index == 0:
+                painter.setBrush(QColor('#0400ff'))  # Голова
+            else:
+                painter.setBrush(QColor('#07f'))
+            painter.drawRect(x * CELL_SIZE, y * CELL_SIZE + 40, CELL_SIZE, CELL_SIZE)
+
+        # Рисуем счет
+        painter.setPen(QColor('#ff6a00'))
+        painter.setFont(QFont('Arial', 16))
+        painter.drawText(10, 30, f'Счет: {self.score}')
+
 
