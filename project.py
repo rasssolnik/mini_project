@@ -15,6 +15,7 @@ class SnakeGame(QWidget):
 
         self.initUI()
         self.key_timer.timeout.connect(self.reset_key_press)  # Подключаем метод сброса нажатия клавиш
+        self.key_timer = QTimer()  # Таймер для управления задержкой нажатия клавиш
         self.key_pressed = False  # Флаг для отслеживания нажатия клавиш
 
     def initUI(self):
@@ -23,6 +24,12 @@ class SnakeGame(QWidget):
 
         self.timer = QBasicTimer()
         self.speed = 100  #cкорость игры
+
+        self.snake = [(WIDTH // 2, HEIGHT // 2)]
+        self.direction = Qt.Key_Right
+        self.food = self.generate_food()
+        self.score = 0
+        self.game_over = False
 
         self.layout = QVBoxLayout()
         self.layout.setAlignment(Qt.AlignCenter)
@@ -46,4 +53,51 @@ class SnakeGame(QWidget):
         self.timer.start(self.speed, self)
         self.setFocus()  # Устанавливаем фокус на игровое окно (ради того чтобы после нажатия кнопки начала игры кнопки перемещения нажимались адекватно)
     
+    def generate_food(self):
+        while True: #спавн яблок и проверка на то что змеи нет на клетке
+            position = (random.randint(0, WIDTH - 1), random.randint(0, HEIGHT - 1))
+            if position not in self.snake:
+                return position
+
+    def timerEvent(self, event):
+        if event.timerId() == self.timer.timerId():
+            self.move_snake()
+        else:
+            super().timerEvent(event) #движение змеи
+
+    def move_snake(self):
+        head_x, head_y = self.snake[0]
+
+        if self.direction == Qt.Key_Left:
+            head_x -= 1
+        elif self.direction == Qt.Key_Right:
+            head_x += 1
+        elif self.direction == Qt.Key_Up:
+            head_y -= 1
+        elif self.direction == Qt.Key_Down:
+            head_y += 1
+
+        # Проверка столкновений с границами
+        if head_x < 0 or head_x >= WIDTH or head_y < 0 or head_y >= HEIGHT:
+            self.end_game()
+            return
+
+        new_head = (head_x, head_y)
+
+        # Проверка столкновений с телом змеи
+        if new_head in self.snake:
+            self.end_game()
+            return
+
+        self.snake.insert(0, new_head)
+
+        # Проверка поедания еды
+        if new_head == self.food:
+            self.score += 10
+            self.food = self.generate_food()
+        else:
+            self.snake.pop()
+
+        self.update()
+
 
