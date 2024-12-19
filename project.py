@@ -36,6 +36,6 @@ class SnakeGame(QWidget):
         self.layout.addWidget(self.start_button)
         self.setLayout(self.layout)
         #проверка
-#
+#`123`
     
 
